@@ -1,14 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sri Krishna Institute of Technology</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>SKITHub | Smart Proctor Hub</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+  --green:#16a34a;
+  --dark:#0f172a;
+  --light:#f8fafc;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
+}
+
+body{
+  background:var(--light);
+}
+
+/* ================= HEADER ================= */
+header{
+  height:70px;
+  background:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 40px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+.logo{
+  font-size:24px;
+  font-weight:700;
+}
+.logo span{color:var(--green)}
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--green);
+  cursor:pointer;
+}
+
+/* ================= HERO ================= */
+.hero{
+  min-height:calc(100vh - 130px);
+  background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("https://images.unsplash.com/photo-1588072432836-e10032774350");
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#fff;
+}
+.hero h1{font-size:52px;margin-bottom:15px}
+.hero p{font-size:18px;margin-bottom:35px}
+.hero-buttons{
+  display:flex;
+  gap:25px;
+  justify-content:center;
+}
+.btn{
+  padding:14px 34px;
+  border-radius:30px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn.light{background:#fff;color:#000}
+.btn.dark{background:#000;color:#fff}
+
+/* ================= ABOUT ================= */
+.about{
+  background:var(--green);
+  padding:80px 40px;
+  color:#fff;
+}
+.about-container{
+  max-width:1100px;
+  margin:auto;
+}
+.about h2{
+  text-align:center;
+  font-size:32px;
+  margin-bottom:15px;
+}
+.about > .about-container > p{
+  text-align:center;
+  max-width:750px;
+  margin:0 auto 50px;
+  color:#037a2d;
+}
+.about-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:25px;
+}
+.about-card{
+  background:#fff;
+  color:#111;
+  padding:25px;
+  border-radius:16px;
+}
+.about-card h3{
+  color:var(--green);
+  margin-bottom:10px;
+}
+
+/* ================= FOOTER ================= */
+footer{
+  background:#0f172a;
+  color:#fff;
+  text-align:center;
+  padding:16px;
+}
+
+/* ================= LOGIN MODAL ================= */
+.login-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+.login-box{
+  background:#000;
+  color:#fff;
+  padding:30px;
+  width:320px;
+  border-radius:14px;
+}
+.login-box h2{
+  text-align:center;
+  color:var(--green);
+  margin-bottom:20px;
+}
+.login-box input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:none;
+}
+.login-box button{
+  width:100%;
+  padding:12px;
+  background:var(--green);
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+}
+#error{
+  color:#fecaca;
+  text-align:center;
+  display:none;
+}
+
+/* ================= DASHBOARD ================= */
+.dashboard{display:none}
+.container{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  background:var(--dark);
+  color:#fff;
+  padding:25px;
+}
+.sidebar h2{
+  color:var(--green);
+  text-align:center;
+  margin-bottom:30px;
+}
+.sidebar li{
+  list-style:none;
+  padding:14px;
+  margin-bottom:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.sidebar li:hover,
+.sidebar li.active{
+  background:var(--green);
+  color:#000;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  padding:25px;
+}
+.topbar{
+  background:#fff;
+  border-radius:14px;
+  padding:16px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+}
+
+/* GRAPHS */
+.graphs{
+  margin-top:25px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:22px;
+}
+.graph-box{
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+}
+.graph-title{
+  color:var(--green);
+  font-weight:600;
+}
+.graph-sub{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:10px;
+}
+
+/* TABLES */
+.table-box{
+  display:none;
+  margin-top:25px;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+}
+th{
+  background:var(--green);
+  color:#fff;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{display:none}
+}
+</style>
 </head>
+
 <body>
-    <h1>Welcome to Sri Krishna Institute of Technology</h1>
-    <p>Your journey to excellence begins here.</p>
-    
+
+<!-- ========== LANDING PAGE ========== -->
+<div id="landingPage">
+
+<header>
+  <div class="logo"><span>SKIT</span>hub</div>
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+    id="profileImage"
+    class="avatar"
+    alt="Profile"
+  >
+</header>
+
+<section class="hero">
+  <div>
+    <h1>SMART PROCTOR HUB</h1>
+    <p>SRI KRISHNA INSTITUTE OF TECHNOLOGY</p>
+    <div class="hero-buttons">
+      <button class="btn light">GET STARTED</button>
+      <button class="btn dark" onclick="openLogin()">LOGIN</button>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="about-container">
+    <h2>About Smart Proctor Hub</h2>
+    <p>
+      A centralized academic monitoring platform to manage attendance,
+      performance, analytics, and student progress securely.
+    </p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>🎓 Student Dashboard</h3>
+        <p>Track GPA, attendance, and assignments.</p>
+      </div>
+      <div class="about-card">
+        <h3>👨‍🏫 Proctor Monitoring</h3>
+        <p>Faculty oversight and mentoring tools.</p>
+      </div>
+      <div class="about-card">
+        <h3>📊 Smart Analytics</h3>
+        <p>Visual insights for academic performance.</p>
+      </div>
+      <div class="about-card">
+        <h3>🔐 Secure Access</h3>
+        <p>Role-based authentication and security.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Sri Krishna Institute of Technology
+</footer>
+
+</div>
+
+<!-- ========== LOGIN ========== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error">Invalid credentials</p>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div class="dashboard" id="dashboardPage">
+<div class="container">
+
+  <div class="sidebar">
+    <h2>Student Panel</h2>
+    <li class="active" data-page="dashboard">Dashboard</li>
+    <li data-page="courses">Courses</li>
+    <li data-page="attendance">Attendance</li>
+    <li data-page="assignments">Assignments</li>
+    <li data-page="results">Results</li>
+    <li onclick="logout()">Logout</li>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h2 id="title">Dashboard</h2>
+      <div>👤 Student</div>
+    </div>
+
+    <div id="dashboard" class="graphs">
+      <div class="graph-box">
+        <div class="graph-title">📊 Attendance</div>
+        <div class="graph-sub">Weekly trend</div>
+        <canvas id="attendanceChart"></canvas>
+      </div>
+      <div class="graph-box">
+        <div class="graph-title">📈 GPA</div>
+        <div class="graph-sub">Semester performance</div>
+        <canvas id="gpaChart"></canvas>
+      </div>
+    </div>
+
+    <div id="courses" class="table-box">
+      <h3>Courses</h3>
+      <table>
+        <tr><th>Course</th><th>Status</th></tr>
+        <tr><td>Machine Learning</td><td>Ongoing</td></tr>
+        <tr><td>DBMS</td><td>Completed</td></tr>
+      </table>
+    </div>
+
+    <div id="attendance" class="table-box">
+      <h3>Attendance</h3>
+      <table>
+        <tr><th>Subject</th><th>%</th></tr>
+        <tr><td>ML</td><td>93%</td></tr>
+      </table>
+    </div>
+
+    <div id="assignments" class="table-box">
+      <h3>Assignments</h3>
+      <table>
+        <tr><th>Subject</th><th>Status</th></tr>
+        <tr><td>DBMS</td><td>Pending</td></tr>
+      </table>
+    </div>
+
+    <div id="results" class="table-box">
+      <h3>Results</h3>
+      <table>
+        <tr><th>Semester</th><th>GPA</th></tr>
+        <tr><td>3</td><td>8.4</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+function openLogin(){
+  loginOverlay.style.display="flex";
+}
+
+loginOverlay.onclick = e =>{
+  if(e.target===loginOverlay) loginOverlay.style.display="none";
+}
+
+function login(){
+  if(username.value==="student" && password.value==="1234"){
+    document.getElementById("profileImage").src =
+      "https://randomuser.me/api/portraits/men/32.jpg";
+
+    landingPage.style.display="none";
+    loginOverlay.style.display="none";
+    dashboardPage.style.display="block";
+    loadCharts();
+  }else{
+    error.style.display="block";
+  }
+}
+
+function logout(){
+  dashboardPage.style.display="none";
+  landingPage.style.display="block";
+  document.getElementById("profileImage").src =
+    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+}
+
+document.querySelectorAll(".sidebar li[data-page]").forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll(".sidebar li").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    title.innerText=tab.innerText;
+
+    document.querySelectorAll(".graphs,.table-box")
+      .forEach(s=>s.style.display="none");
+
+    tab.dataset.page==="dashboard"
+      ? dashboard.style.display="grid"
+      : document.getElementById(tab.dataset.page).style.display="block";
+  }
+});
+
+function loadCharts(){
+  new Chart(attendanceChart,{
+    type:"line",
+    data:{
+      labels:["Mon","Tue","Wed","Thu","Fri"],
+      datasets:[{
+        data:[90,92,94,91,93],
+        borderColor:"#16a34a",
+        fill:true
+      }]
+    }
+  });
+
+  new Chart(gpaChart,{
+    type:"bar",
+    data:{
+      labels:["Sem 1","Sem 2","Sem 3","Sem 4"],
+      datasets:[{
+        data:[7.8,8.1,8.4,8.5],
+        backgroundColor:"#16a34a"
+      }]
+    },
+    options:{scales:{y:{max:10,beginAtZero:true}}}
+  });
+}
+</script>
+
 </body>
 </html>
